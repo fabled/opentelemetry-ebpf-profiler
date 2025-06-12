@@ -56,7 +56,7 @@ func Loader(_ interpreter.EbpfHandler, info *interpreter.LoaderInfo) (
 		return nil, nil
 	}
 
-	pclnData, err := elfunwindinfo.SearchGoPclntab(ef)
+	pclnData, err := elfunwindinfo.ExtractGoPclntab(ef)
 	if err != nil {
 		return nil, err
 	}
