@@ -85,7 +85,7 @@ unwind_one_beam_frame(PerCPURecord *record, BEAMProcInfo *info, BEAMRangesSearch
 
     u64 entry_ptr = ranges->info.modules + current * sizeof(BEAMRangeEntry);
     if (bpf_probe_read_user(&current_range, sizeof(BEAMRangeEntry), (void *)(entry_ptr))) {
-      DEBUG_PRINT("beam: Failed to read current range");
+      DEBUG_PRINT("beam: failed to read current range");
       return ERR_BEAM_MODULES_READ_FAILURE;
     }
   }
@@ -175,7 +175,7 @@ static EBPF_INLINE int unwind_beam(struct pt_regs *ctx)
   u32 the_active_code_index;
   if (bpf_probe_read_user(
         &the_active_code_index, sizeof(u32), (void *)info->the_active_code_index)) {
-    DEBUG_PRINT("beam: Failed to read the_active_code_index");
+    DEBUG_PRINT("beam: failed to read the_active_code_index");
     error = ERR_BEAM_ACTIVE_CODE_INDEX_READ_FAILURE;
     goto exit;
   }
@@ -193,7 +193,7 @@ static EBPF_INLINE int unwind_beam(struct pt_regs *ctx)
   BEAMRangesSearchCache ranges;
 
   if (bpf_probe_read_user(&ranges.info, sizeof(BEAMRangesInfo), (void *)(active_ranges))) {
-    DEBUG_PRINT("beam: Failed to read active ranges");
+    DEBUG_PRINT("beam: failed to read active ranges");
     error = ERR_BEAM_MODULES_READ_FAILURE;
     goto exit;
   }
@@ -202,21 +202,21 @@ static EBPF_INLINE int unwind_beam(struct pt_regs *ctx)
 
   u64 entry_ptr = ranges.info.modules;
   if (bpf_probe_read_user(&ranges.first, sizeof(BEAMRangeEntry), (void *)(entry_ptr))) {
-    DEBUG_PRINT("beam: Failed to read first range");
+    DEBUG_PRINT("beam: failed to read first range");
     error = ERR_BEAM_MODULES_READ_FAILURE;
     goto exit;
   }
 
   entry_ptr = ranges.info.modules + (ranges.info.n / 2) * sizeof(BEAMRangeEntry);
   if (bpf_probe_read_user(&ranges.mid, sizeof(BEAMRangeEntry), (void *)(entry_ptr))) {
-    DEBUG_PRINT("beam: Failed to read middle range");
+    DEBUG_PRINT("beam: failed to read middle range");
     error = ERR_BEAM_MODULES_READ_FAILURE;
     goto exit;
   }
 
   entry_ptr = ranges.info.modules + (ranges.info.n - 1) * sizeof(BEAMRangeEntry);
   if (bpf_probe_read_user(&ranges.last, sizeof(BEAMRangeEntry), (void *)(entry_ptr))) {
-    DEBUG_PRINT("beam: Failed to read last range");
+    DEBUG_PRINT("beam: failed to read last range");
     error = ERR_BEAM_MODULES_READ_FAILURE;
     goto exit;
   }

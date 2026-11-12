@@ -60,7 +60,7 @@ static EBPF_INLINE int process_php_frame(
   if (bpf_probe_read_user(
         &zend_function, sizeof(void *), execute_data + phpinfo->zend_execute_data_function)) {
     DEBUG_PRINT(
-      "Failed to read current_execute_data->func (0x%lx)",
+      "failed to read current_execute_data->func (0x%lx)",
       (u64)execute_data + phpinfo->zend_execute_data_function);
     return metricID_UnwindPHPErrBadZendExecuteData;
   }
@@ -78,7 +78,7 @@ static EBPF_INLINE int process_php_frame(
   u8 func_type;
   if (bpf_probe_read_user(
         &func_type, sizeof(func_type), zend_function + phpinfo->zend_function_type)) {
-    DEBUG_PRINT("Failed to read execute_data->func->type (0x%lx)", (u64)zend_function);
+    DEBUG_PRINT("failed to read execute_data->func->type (0x%lx)", (u64)zend_function);
     return metricID_UnwindPHPErrBadZendFunction;
   }
 
@@ -89,7 +89,7 @@ static EBPF_INLINE int process_php_frame(
     if (bpf_probe_read_user(
           &zend_op, sizeof(void *), execute_data + phpinfo->zend_execute_data_opline)) {
       DEBUG_PRINT(
-        "Failed to read execute_data->opline (0x%lx)",
+        "failed to read execute_data->opline (0x%lx)",
         (u64)execute_data + phpinfo->zend_execute_data_opline);
       return metricID_UnwindPHPErrBadZendExecuteData;
     }
@@ -97,7 +97,7 @@ static EBPF_INLINE int process_php_frame(
     // Get opline->lineno
     if (bpf_probe_read_user(&lineno, sizeof(u32), zend_op + phpinfo->zend_op_lineno)) {
       DEBUG_PRINT(
-        "Failed to read executor_globals->opline->lineno (0x%lx)",
+        "failed to read executor_globals->opline->lineno (0x%lx)",
         (u64)zend_op + phpinfo->zend_op_lineno);
       return metricID_UnwindPHPErrBadZendOpline;
     }
@@ -106,7 +106,7 @@ static EBPF_INLINE int process_php_frame(
     // so we can reuse it in walk_php_stack
     if (bpf_probe_read_user(
           type_info, sizeof(u32), execute_data + phpinfo->zend_execute_data_this_type_info)) {
-      DEBUG_PRINT("Failed to read execute_data->This.type_info (0x%lx)", (u64)execute_data);
+      DEBUG_PRINT("failed to read execute_data->This.type_info (0x%lx)", (u64)execute_data);
       return metricID_UnwindPHPErrBadZendExecuteData;
     }
   }
@@ -154,7 +154,7 @@ static EBPF_INLINE int walk_php_stack(PerCPURecord *record, PHPProcInfo *phpinfo
           sizeof(void *),
           execute_data + phpinfo->zend_execute_data_prev_execute_data)) {
       DEBUG_PRINT(
-        "Failed to read current_execute_data->prev_execute_data (0x%lx)", (u64)execute_data);
+        "failed to read current_execute_data->prev_execute_data (0x%lx)", (u64)execute_data);
       increment_metric(metricID_UnwindPHPErrBadZendExecuteData);
       goto err;
     }
@@ -228,7 +228,7 @@ static EBPF_INLINE int unwind_php(struct pt_regs *ctx)
           sizeof(void *),
           (void *)phpinfo->current_execute_data)) {
       DEBUG_PRINT(
-        "Failed to read executor_globals.current_execute data (0x%lx)",
+        "failed to read executor_globals.current_execute_data (0x%lx)",
         phpinfo->current_execute_data);
       increment_metric(metricID_UnwindPHPErrBadCurrentExecuteData);
       goto exit;

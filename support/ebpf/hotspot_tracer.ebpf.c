@@ -452,14 +452,14 @@ found_ret:
   if (
     code[CODE_CUR] == 0x41 && code[CODE_CUR + 1] == 0x85 && code[CODE_CUR + 2] == 0x02 &&
     code[CODE_CUR + 3] == 0xc3) {
-    DEBUG_PRINT("jvm:  -> epilogue on safepoint check'");
+    DEBUG_PRINT("jvm:  -> epilogue on safepoint check");
     goto pc_only;
   }
   // Current instruction: 'jne ...' + 'ret'
   // seen in native wrappers, see:
   // https://hg.openjdk.org/jdk-updates/jdk14u/file/default/src/hotspot/cpu/x86/sharedRuntime_x86_64.cpp#l2744
   if (code[CODE_CUR] == 0x0f && code[CODE_CUR + 1] == 0x85 && code[CODE_CUR + 6] == 0xc3) {
-    DEBUG_PRINT("jvm:  -> epilogue on native wrapper exception check'");
+    DEBUG_PRINT("jvm:  -> epilogue on native wrapper exception check");
     goto pc_only;
   }
   // Previous instruction was 'leave' or 'pop rbp'
@@ -666,7 +666,7 @@ static EBPF_INLINE ErrorCode hotspot_handle_nmethod(
   u64 stack[HOTSPOT_RA_SEARCH_SLOTS];
   bpf_probe_read_user(stack, sizeof(stack), (void *)(ui->sp - sizeof(u64)));
   for (u64 i = 0; i < HOTSPOT_RA_SEARCH_SLOTS; i++, ui->sp += sizeof(u64)) {
-    DEBUG_PRINT("jvm:    -> %lu pc candidate 0x%lx", i, stack[i]);
+    DEBUG_PRINT("jvm:  -> %lu pc candidate 0x%lx", i, stack[i]);
     if (hotspot_addr_in_codecache(trace->pid, stack[i])) {
       DEBUG_PRINT("jvm:  -> unwinding complete frame + %lu words", i);
       *action = UA_UNWIND_REGS;

@@ -35,7 +35,7 @@ tsd_read(const TSDInfo *tsi, const void *tsd_base, u32 key, void **out)
 
   tsd_addr += index * tsi->multiplier;
 
-  DEBUG_PRINT("readTSD key %u from address 0x%lx", key, (u64)tsd_addr);
+  DEBUG_PRINT("TSD key %u read from address 0x%lx", key, (u64)tsd_addr);
   if (bpf_probe_read_user(out, sizeof(*out), tsd_addr)) {
     goto err;
   }
@@ -70,7 +70,7 @@ tls_read_var(const TLSVarInfo *var, const void *tsd_base, void **out)
 {
   if (var->dtv_pos == 0) {
     const void *tls_addr = tsd_base + var->tls_offset;
-    DEBUG_PRINT("readTLS static at 0x%lx", (u64)tls_addr);
+    DEBUG_PRINT("TLS static at 0x%lx", (u64)tls_addr);
     if (bpf_probe_read_user(out, sizeof(*out), tls_addr)) {
       return TLS_READ_ERR;
     }
@@ -108,7 +108,7 @@ tls_read_var(const TLSVarInfo *var, const void *tsd_base, void **out)
     goto err;
   }
 
-  DEBUG_PRINT("readTLS via DTV, dtv_pos 0x%x, offset 0x%x", var->dtv_pos, (u32)var->tls_offset);
+  DEBUG_PRINT("TLS via DTV, dtv_pos 0x%x, offset 0x%x", var->dtv_pos, (u32)var->tls_offset);
   return TLS_READ_OK;
 
 err:
